@@ -2,10 +2,24 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "tsc-watch --silent --onSuccess \"node ./dist/index.js\""
+    "dev": "tsc-watch --onSuccess \"node ./dist/index.js\""
   },
   "devDependencies": {
-    "typescript": "^5.1.6",
-    "tsc-watch": "^6.0.4"
+    "@types/node": "^20.8.4",
+    "@types/stopword": "^2.0.1",
+    "tsc-watch": "^6.0.4",
+    "tslib": "^2.6.2",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "axios": "^1.5.1",
+    "cheerio": "^1.0.0-rc.12",
+    "compromise": "^14.10.0",
+    "natural": "^6.7.2",
+    "puppeteer": "^21.3.8",
+    "reflect-metadata": "^0.1.13",
+    "stopword": "^2.0.8",
+    "typedi": "^0.10.0",
+    "uuid": "^9.0.1"
   }
 }
