@@ -3,7 +3,7 @@ import { IdentifierPayload } from "./interfaces/identifier";
 import { randomUUID } from "crypto";
 
 
-interface Point {
+export interface Point {
     x: number
     y: number
 }

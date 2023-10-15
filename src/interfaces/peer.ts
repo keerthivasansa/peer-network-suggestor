@@ -1,9 +1,9 @@
 
 interface Peer {
-    visitIds: string[]
-    interestId: string
-    locationIdentifier: string;
-    demographicsIdentifier: string;
-    anonymousId: string;
-    browserAgent: string;
+    interests: string[]
+    age: number;
+    browser: string;
+    interestId: string;
+    os: string;
+    device: string;
 }
