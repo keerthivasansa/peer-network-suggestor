@@ -20,8 +20,8 @@ async function main() {
     })
 
     k.setOptions({
-        smoothing: 0.15,
-        temperature: 0.75,
+        smoothing: 0.10,
+        temperature: 0.08,
     })
 
     const testData = k.getTestData();

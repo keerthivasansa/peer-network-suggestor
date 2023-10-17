@@ -125,7 +125,6 @@ export class PeerManager {
             if (array1.includes(item) && !common.includes(item))
                 common.push(item);
         }
-        // await this.checkSimilarity(array1.toString())
         return common.length / Math.max(array1.length, array2.length);
     }
 
