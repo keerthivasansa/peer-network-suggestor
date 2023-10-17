@@ -199,7 +199,7 @@ export class Classifier {
     adjustForTemperature(data: PeerData[], currentPeer: Peer, totalPeers: number) {
         if (this._currentTemperature < (totalPeers * this.modelOptions.temperature)) {
             this._currentTemperature += 1;
-            return data.filter(({ peer }) => JSON.stringify(peer) !== JSON.stringify(currentPeer));
+            return this.removeCurrentPeerFromNetwork(currentPeer, data);
         }
         return data;
     }
@@ -208,6 +208,10 @@ export class Classifier {
         const file = readFileSync("seed.json", "utf-8");
         const seedData = JSON.parse(file) as { peer: Peer, tag: string }[];
         return seedData;
+    }
+
+    removeCurrentPeerFromNetwork(currentPeer:Peer, peerData: PeerData[]) {
+        return peerData.filter(peer => !this.peerManager.isEqual(currentPeer, peer.peer));
     }
 
     getTestData() {
