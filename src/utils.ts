@@ -15,3 +15,7 @@ export function getNRandomElements<T>(n: number, arr: T[]): T[] {
 
     return elements;
 }
+
+export function sleep(ms: number) {
+    return new Promise((res, rej) => setTimeout(res, ms));
+}

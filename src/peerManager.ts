@@ -19,14 +19,13 @@ getModel();
 
 @Service()
 export class PeerManager {
-    private network = new Map<string, Peer>();
+    private network = new Map<string, PeerData>();
     private CLOSEST_PEERS = 5;
     private interests = new Map<string, string>();
-    private identifierService = Container.get(Identifier);
 
-    addPeerToNetwork(peer: Peer) {
+    addPeerToNetwork(peerData: PeerData) {
         const peerId = randomUUID();
-        this.network.set(peerId, peer);
+        this.network.set(peerId, peerData);
         return peerId;
     }
 
@@ -158,14 +157,5 @@ export class PeerManager {
         const cipher = Buffer.from(JSON.stringify(payload)).toString('base64')
         this.interests.set(peerId, cipher);
         return;
-    }
-
-    findClosestPeerInterests(currentPeerId: string) {
-        const currentPeerObject = this.network.get(currentPeerId);
-        const interestId = currentPeerObject.interestId;
-        const closePeerInterests = this.identifierService.getClosestPeer(interestId);
-        const closestIdentifer = closePeerInterests.payload;
-        const interests = this.getPeerInterests(closestIdentifer);
-        return interests;
     }
 }
