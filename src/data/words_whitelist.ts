@@ -1,0 +1,1 @@
+export const wordsWhitelist = ['search', 'result', 'loading', 'main', 'information', 'about', 'more', 'example', 'function', 'settings', 'results', 'navigation', 'link', 'footer', 'header', 'page', 'content', 'facebook', 'twitter', 'instagram', 'youtube', 'submit', 'download', 'https://', 'accessibility', 'name', 'description']

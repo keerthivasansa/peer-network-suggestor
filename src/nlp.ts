@@ -1,39 +1,45 @@
 import natural from "natural";
 import { Service } from "typedi";
 import nlp from 'compromise'
-import { removeStopwords, eng } from "stopword"
+import { removeStopwords } from "stopword"
 import { normalize } from "natural";
 import pos from "pos";
+import { wordsWhitelist } from "./data/words_whitelist";
 
 @Service()
 export class NLPService {
-    private NUM_SIGNIFICANT_TOKENS = 5;
+    private NUM_SIGNIFICANT_TOKENS = 15;
     private nlpTokenizer = new natural.WordTokenizer({
         discardEmpty: true,
         gaps: true,
     });
 
-    getTags(headersContent: string) {
-        const tokenizer = nlp(headersContent);
+    getTags(content: string) {
+        const tokenizer = nlp(content);
 
-        const n = tokenizer.nouns().toSingular(true).autoFill();
+        const n = tokenizer.nouns().toSingular(true);
+
+        if (!n)
+            return []
+        console.log({ n, content })
         const tagger = new pos.Tagger();
 
         const numbers = (tokenizer.numbers().out('array') as string[]).map(num => num.trim().toLowerCase());
 
         const tokens = (n.map(m => m.text().split(/\s/)) as string[][]).flat(1).map(token => token.trim().toLocaleLowerCase()).filter(token => {
-            if (token == '')
+            if (!token)
                 return false;
             const tag = tagger.tag([token])[0][1]
             return tag === 'NN'
         });
-        const specialCharactersRegex = /[!@#$^&|*()–\'\\[\]\.,"+=-\d]/
+        const specialCharactersRegex = /[!@#$^&|*()–\›'\\[\]\.,"+=-\d]/
 
-        const normalizedTokens = normalize(tokens).map(token => token.replace(specialCharactersRegex, '')).filter(token => token != '' && !numbers.includes(token));
+        const normalizedTokens = normalize(tokens).map(token => token.replace(specialCharactersRegex, '')).filter(
+            token => token != '' &&
+                !numbers.includes(token) &&
+                !wordsWhitelist.includes(token));
 
         const significantTokens = removeStopwords(normalizedTokens);
-
-        // const tokens = filters.map(filter => filter()).flat().map(token => token.text());
         const tokenFreqMap = this.calcFrequencyMap(significantTokens);
         const mostFrequentTokens = this.getMostSignificantTokens(tokenFreqMap, this.NUM_SIGNIFICANT_TOKENS);
         return mostFrequentTokens;
@@ -70,6 +76,6 @@ export class NLPService {
                 }
             }
         );
-        return significantTokens;
+        return significantTokens.slice(0, 20);
     }
 }
