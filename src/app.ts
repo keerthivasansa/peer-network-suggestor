@@ -18,8 +18,8 @@ export class App {
 
     initClassifier() {
         this.classifier.setOptions({
-            smoothing: 0.12,
-            temperature: 0.12,
+            smoothing: 0.05,
+            temperature: 0.05,
         })
     }
 
@@ -28,6 +28,7 @@ export class App {
             age: 20,
             browser: 'chrome',
             device: 'desktop',
+            location: 'india',
             os: 'windows',
             interests: ['gaming', 'coding', 'music']
         };

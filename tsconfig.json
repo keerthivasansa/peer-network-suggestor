@@ -22,7 +22,7 @@
       "baseUrl": "src",
       "skipLibCheck": true
     },
-    "include": ["src/**/*.ts", "src/**/*.json", ".env"],
+    "include": ["src/**/*.ts", "src/**/*.json", ".env", "src/seed.js"],
     "exclude": ["node_modules"]
   }
   

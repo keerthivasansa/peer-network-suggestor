@@ -1,49 +1,37 @@
-import { config } from "dotenv";
-import { writeFileSync } from "fs";
-import OpenAI from "openai";
+import { readFileSync, writeFileSync } from "fs";
 
-const seedPeers = [];
+export class SeedUtils {
+    private data: PeerData[];
 
-const out = config();
-
-const apiKey = process.env.SEED_AI_KEY;
-
-const openai = new OpenAI({
-    apiKey,
-});
-
-class SeedGenerator {
-
-    async generate() {
-        const output = await openai.chat.completions.create({
-            temperature: 0.6,
-            frequency_penalty: 0.4,
-            model: "gpt-3.5-turbo-0301",
-            messages: [
-                {
-                    role: "system",
-                    content:
-                        `Generate seed data for the following format: interface Peer {
-                        interests: string[]
-                        age: number;
-                        browser: string;
-                        interestId: string;
-                        os: string;
-                        device: string;
-                    }. The format: [{"peer": Peer, "tag": string}]. The tag needs to represent a shopping category that the person who is described by the peer object could buy based on the characteristics. Give more weightage to the age parameter when deciding what they would buy. Also take the location and interests into consideration when deciding the category. The mac / ios browsers / os will tend to be more creative / musical friendly. Now generate 50 such data in JSON array format. Do not output any other text, this needs to be saved to a file. Also give the data in minified format`
-                }
-            ]
-        });
-        const data = output.choices[0].message.content.trim() 
-        writeFileSync('seed.json', data);
-        console.log('Finished')
+    constructor() {
+        const file = JSON.parse(readFileSync('./sample_peers.json', 'utf-8')) as PeerData[][];
+        this.data = file.flat(1);
     }
 
-}
+    removeDuplicates() {
+        const peers = new Set();
+        this.data.forEach((peer, index) => { peers.add(JSON.stringify(peer.peer)) });
+        const peersArray = [];
+        const newPeers = new Map();
+        this.data.map((peerData, index) => {
+            const allowed = this.get1Or2();
+            if (!allowed && newPeers.get(JSON.stringify(peerData)) === 1) {
+                return;
+            }
+            peersArray.push(peerData);
+            newPeers.set(JSON.stringify(peerData), 1);
+            return false;
+        })
+        writeFileSync("new_seed.json", JSON.stringify(peersArray));
+        console.log(peers.size, this.data.length, peersArray.length);
+    }
 
-async function main() {
-    console.log('Generating')
-    const seedGen = new SeedGenerator();
-    seedGen.generate();
-};
-main();
+    get1Or2() {
+        const randomValue = Math.random();
+        // Use a conditional statement to return either 1 or 2
+        if (randomValue < 0.08) {
+            return true;
+        } 
+        return false;
+    }
+}

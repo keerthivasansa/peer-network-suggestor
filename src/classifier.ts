@@ -59,7 +59,7 @@ export class Classifier {
             const { peer, tag } = peerData;
             this.addTagNetwork(classifier, peer, tag);
         }
-        console.log({ peer, closePeers: selectedPeers.length });
+        // console.log({ peer, closePeers: selectedPeers.length });
         classifier.train();
         const baseMap = {};
         // base case
@@ -106,16 +106,26 @@ export class Classifier {
     }
 
     adjustForTemperature(data: PeerData[], currentPeer: Peer, totalPeers: number) {
-        if (this._currentTemperature < (totalPeers * this.modelOptions.temperature)) {
-            this._currentTemperature += 1;
-            return this.removeCurrentPeerFromNetwork(currentPeer, data);
+        const minConfidence = 1.30;
+        const currentPeerMatch = data.find(peer => this.peerManager.isEqual(peer.peer, currentPeer));
+        data = data.slice(0, 15);
+        if (currentPeerMatch) {
+            for (let i = 0; i < 15; i++) {
+                data.push(currentPeerMatch);
+            }
+            console.log("Current peer match found", currentPeer, currentPeerMatch);
         }
+        // data = data.concat([currentPeer])
+        // if (this._currentTemperature < (totalPeers * this.modelOptions.temperature * minConfidence)) {
+        //     this._currentTemperature += 1;
+        //     return this.removeCurrentPeerFromNetwork(currentPeer, data);
+        // }
         return data;
     }
 
     getSampleData() {
-        const file = readFileSync("seed.json", "utf-8");
-        const seedData = JSON.parse(file) as { peer: Peer, tag: string }[];
+        const data = JSON.parse(readFileSync("new_seed.json", "utf-8")) as PeerData[][];
+        const seedData = data.flat(1);
         return seedData;
     }
 
